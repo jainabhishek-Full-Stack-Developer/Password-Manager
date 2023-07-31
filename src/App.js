@@ -14,18 +14,22 @@ class App extends Component {
     username: '',
     password: '',
     isShow: false,
+    error: false,
   }
 
   listenWebsite = e => {
     this.setState({website: e.target.value})
+    this.setState({error: false})
   }
 
   listenUsername = e => {
     this.setState({username: e.target.value})
+    this.setState({error: false})
   }
 
   listenPassword = e => {
     this.setState({password: e.target.value})
+    this.setState({error: false})
   }
 
   addContent = e => {
@@ -33,22 +37,27 @@ class App extends Component {
     const {username, website, password} = this.state
     const initial = website.slice(0, 1).toUpperCase()
     const classValue = colorList[Math.floor(Math.random() * 5)]
-    const newValues = {
-      id: uuidv4(),
-      initialValue: initial,
-      websiteName: website,
-      userName: username,
-      Password: password,
-      classAdd: classValue,
+
+    if (username !== '' || website !== '' || password !== '') {
+      const newValues = {
+        id: uuidv4(),
+        initialValue: initial,
+        websiteName: website,
+        userName: username,
+        Password: password,
+        classAdd: classValue,
+      }
+      this.setState(prevState => ({
+        latestList: [...prevState.latestList, newValues],
+        website: '',
+        username: '',
+        password: '',
+        isTrue: true,
+        searchInput: '',
+      }))
+    } else {
+      this.setState({error: true})
     }
-    this.setState(prevState => ({
-      latestList: [...prevState.latestList, newValues],
-      website: '',
-      username: '',
-      password: '',
-      isTrue: true,
-      searchInput: '',
-    }))
   }
 
   showPassword = e => {
@@ -78,6 +87,7 @@ class App extends Component {
       latestList,
       isShow,
       searchInput,
+      error,
     } = this.state
     let {isTrue} = this.state
     const newList = latestList.filter(eachValue =>
@@ -145,6 +155,9 @@ class App extends Component {
                 value={password}
               />
             </div>
+            {error && (
+              <span className="errorMessage">Please fill all fields</span>
+            )}
             <button className="addBtn" type="submit">
               Add
             </button>
